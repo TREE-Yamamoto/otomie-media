@@ -349,7 +349,7 @@ const analyseVoice = () => {
 
 //アニメーション再生・ループ
 const animateCanvases = () => {
-    log("animateCanvas!!!!!!!!!!!!!!!!!!!!!!");
+    console.log("animateCanvas!!!!!!!!!!!!!!!!!!!!!!");
     let data = playingData;
     if (isPlaying) {
         if (dataIndex == -1) {
