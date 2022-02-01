@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Video</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <!-- <link rel="stylesheet" href="index.css" /> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</head>
+
+<body>
+    <video id="video" autoplay playsinline></video>
+    <dialog id="dialog">
+        
+    </dialog>
+
+    <script>
+        let audioContext;                               //オーディオコンテキスト格納変数
+        let bufferSize = 1024;                          //音源データ用バッファサイズ
+
+        const medias = {
+            audio: true,
+            video: true
+        };
+        const video = document.getElementById("video");
+        const dialog = document.getElementById("dialog");
+        const promise = navigator.mediaDevices.getUserMedia(medias);
+
+        promise.then(successCallback)
+            .then(errorCallback);
+
+        function successCallback(stream) {
+            video.srcObject = stream;
+            audioContext = new AudioContext();
+            let scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+            localScriptProcessor = scriptProcessor;
+            let mediastreamsource = audioContext.createMediaStreamSource(stream);
+            mediastreamsource.connect(scriptProcessor);
+            scriptProcessor.onaudioprocess = onAudioProcess;
+            scriptProcessor.connect(audioContext.destination);
+            console.log("getUserMedia");
+        };       
+        function errorCallback(err) {
+            alert(err);
+        };
+
+
+        let _onAudioProcess = false;
+        function onAudioProcess(){
+            if(!_onAudioProcess){
+                alert("_onAudioProcess" + _onAudioProcess);
+                var li = document.createElement("li");
+                li.innerHTML = "dialog!!";
+                dialog.appendChild(li);
+                _onAudioProcess = true;
+            }
+            
+            console.log("onAudioProcess");
+            
+        }
+
+    </script>
+</body>
+
+
+

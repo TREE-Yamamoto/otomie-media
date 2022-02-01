@@ -1,5 +1,5 @@
 // クロスブラウザ定義
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+//navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 
 //変数定義
@@ -93,7 +93,7 @@ window.addEventListener("load", () => {
     document.querySelector("#TitleWindow").addEventListener("touchend", startCollecting);
     document.querySelector("[name=titleButton]").addEventListener("click", startCollecting);
     document.querySelector("[name=ButtonOpenMovie]").addEventListener("click", playDataList);
-    
+
 
 });
 
@@ -105,18 +105,24 @@ window.addEventListener("load", () => {
 // }
 
 //解析開始
+
+const medias = {
+    audio: true,
+    // audio: {
+    //     sampleRate: { ideal: 32000 }
+    // }
+    video: false
+}
 const startCollecting = () => {
 
 
 
     audioContext = new AudioContext();
     isCollecting = true;
-    navigator.mediaDevices.getUserMedia({
-        audio: {
-            sampleRate: { ideal: 32000 }
-        }
-    },
-        (stream) => {       //メディアアクセス要求が承認されたときに呼ばれる関数
+    navigator.mediaDevices.getUserMedia(medias)
+
+
+        .then(function (stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
             // 音声入力関連のノードの設定
             localMediaStream = stream;
             let scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
@@ -132,10 +138,8 @@ const startCollecting = () => {
             frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
             timeDomainData = new Uint8Array(audioAnalyser.fftSize);
             mediastreamsource.connect(audioAnalyser);
-        },
-        (e) => {
-            alert(e);
-            
+        })
+        .catch(function (e) {
             console.log(e);
         });
 
