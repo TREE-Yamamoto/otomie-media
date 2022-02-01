@@ -1,5 +1,5 @@
 // クロスブラウザ定義
-//navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 
 //変数定義
@@ -140,6 +140,7 @@ const startCollecting = () => {
             mediastreamsource.connect(audioAnalyser);
         })
         .catch(function (e) {
+            alert(e);
             console.log(e);
         });
 
