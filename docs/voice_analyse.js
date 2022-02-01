@@ -90,6 +90,7 @@ let visual = {               //ビジュアル用に正規化
 };
 
 window.addEventListener("load", () => {
+    startCollecting();
     document.querySelector("#TitleWindow").addEventListener("touchend", startCollecting);
     document.querySelector("[name=titleButton]").addEventListener("click", startCollecting);
     document.querySelector("[name=ButtonOpenMovie]").addEventListener("click", playDataList);
