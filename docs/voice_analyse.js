@@ -115,7 +115,7 @@ const medias = {
 };
 const startCollecting = () => {
 
-
+    alert("startCollecting");
 
     audioContext = new AudioContext();
     isCollecting = true;
