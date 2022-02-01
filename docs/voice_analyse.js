@@ -111,7 +111,7 @@ const startCollecting = () => {
 
     audioContext = new AudioContext();
     isCollecting = true;
-    navigator.getUserMedia({
+    navigator.mediaDevices.getUserMedia({
         audio: {
             sampleRate: { ideal: 32000 }
         }
@@ -134,6 +134,8 @@ const startCollecting = () => {
             mediastreamsource.connect(audioAnalyser);
         },
         (e) => {
+            alert(e);
+            
             console.log(e);
         });
 
