@@ -119,29 +119,32 @@ const startCollecting = () => {
 
     audioContext = new AudioContext();
     isCollecting = true;
-    navigator.mediaDevices.getUserMedia(medias)
-        .then(function (stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
-            // 音声入力関連のノードの設定
+    const promise = navigator.mediaDevices.getUserMedia(medias);
+    promise.then(sucess)
+        .then(error);
+        
+    function sucess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
+        // 音声入力関連のノードの設定
 
-            localMediaStream = stream;
-            let scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
-            localScriptProcessor = scriptProcessor;
-            let mediastreamsource = audioContext.createMediaStreamSource(stream);
-            mediastreamsource.connect(scriptProcessor);
-            scriptProcessor.onaudioprocess = onAudioProcess;
-            scriptProcessor.connect(audioContext.destination);
+        localMediaStream = stream;
+        let scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+        localScriptProcessor = scriptProcessor;
+        let mediastreamsource = audioContext.createMediaStreamSource(stream);
+        mediastreamsource.connect(scriptProcessor);
+        scriptProcessor.onaudioprocess = onAudioProcess;
+        scriptProcessor.connect(audioContext.destination);
 
-            // 音声解析関連のノードの設定
-            audioAnalyser = audioContext.createAnalyser();
-            audioAnalyser.fftSize = 2048;
-            frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-            timeDomainData = new Uint8Array(audioAnalyser.fftSize);
-            mediastreamsource.connect(audioAnalyser);
-        })
-        .catch(function (e) {
-            alert(e);
-            console.log(e);
-        });
+        // 音声解析関連のノードの設定
+        audioAnalyser = audioContext.createAnalyser();
+        audioAnalyser.fftSize = 2048;
+        frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
+        timeDomainData = new Uint8Array(audioAnalyser.fftSize);
+        mediastreamsource.connect(audioAnalyser);
+    };
+    function error(e) {
+        alert(e);
+        console.log(e);
+    };
 
     createJsonDataFormat();
     addButtonEvent();
