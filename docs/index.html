@@ -3,72 +3,35 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>音声解析</title>
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.js"></script> -->
-
-    <style type="text/css">
-        #realTimeGraphs,
-        #laterGraphs {
-            width: 50%;
-            height: 100px;
-        }
-
-        #GraphClum {
-            display: flex;
-        }
-    </style>
-
+    <title>Video</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <link rel="stylesheet" href="index.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 </head>
 
 <body>
-    <div id="TitleWindow">
-        <canvas width="100" height="100"></canvas>
-        <button type="button" name="titleButton">title</button>
+    <video id="video" autoplay playsinline></video>
+    <script>
+        const medias = {
+            audio: true,
+            video: true
+        };
+        const video = document.getElementById("video");
+        const promise = navigator.mediaDevices.getUserMedia(medias);
 
-        <!-- <button id="startRecording">解析開始</button>
-        <button id="endRecording">解析終了</button> -->
-    </div>>
+        promise.then(successCallback)
+            .then(errorCallback);
 
-    <div id="textbox">
-        <p id="p1" class="text_cat">テキスト1</p>
-        <p id="p2" class="text_cat">テキスト2</p>
-        <p id="p3" class="text_cat">テキスト3</p>
-    </div>
-    
+        function successCallback(stream) {
+            video.srcObject = stream;
+        };
 
-    <div id="ButtonStartRec" >
-        <button type="button" name="ButtonStartRec">収録開始</button>
-        <button type="button" name="ButtonStopRec">収録停止</button>
-    </div>
-    <div id="ButtonOpenMovie">
-        <button type="button" name="ButtonOpenMovie">再生</button>
-    </div>
-
-    <hr>
-    <div id=GraphClum>
-        <div id="realTimeGraphs">
-            スペクトラム<br>
-            <canvas id="canvasFrequency" width="500" height="250"></canvas><br>
-            波形データ<br>
-            <canvas id="canvasTimeDomain" width="500" height="250"></canvas><br>
-            スペクトログラム<br>
-            <canvas id="canvasSpectrogram" width="500" height="250"></canvas><br>
-            タイムライン<br>
-            <canvas id="canvasTimeline" width="500" height="250"></canvas><br>
-
-        </div>
-
-        <div id="laterGraphs">
-            スペクトラム<br>
-            <canvas id="A_canvasFrequency" width="500" height="250"></canvas><br>
-            波形データ<br>
-            <canvas id="A_canvasTimeDomain" width="500" height="250"></canvas><br>
-            スペクトログラム<br>
-            <canvas id="A_canvasSpectrogram" width="500" height="250"></canvas><br>
-
-        </div>
-    </div>
-    <script src="voice_analyse.js"></script>
+        function errorCallback(err) {
+            alert(err);
+        };
+    </script>
 </body>
 
-</html>
+
+
