@@ -92,7 +92,8 @@ let visual = {               //ビジュアル用に正規化
 window.addEventListener("load", () => {
     document.querySelector("#TitleWindow").addEventListener("touchend", startCollecting);
     document.querySelector("[name=titleButton]").addEventListener("click", startCollecting);
-    ;
+    document.querySelector("[name=ButtonOpenMovie]").addEventListener("click", playDataList);
+    
 
 });
 
@@ -343,13 +344,12 @@ const analyseVoice = () => {
     drawSpectrogram(data, dataIndex, canvasSpectrogram);
 }
 
-const updateData = () => {
 
-}
 
 
 //アニメーション再生・ループ
 const animateCanvases = () => {
+    log("animateCanvas!!!!!!!!!!!!!!!!!!!!!!");
     let data = playingData;
     if (isPlaying) {
         if (dataIndex == -1) {
