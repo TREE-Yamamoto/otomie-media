@@ -111,7 +111,7 @@ const medias = {
     // audio: {
     //     sampleRate: { ideal: 32000 }
     // }
-    video: false
+    video: true
 }
 const startCollecting = () => {
 
@@ -120,10 +120,9 @@ const startCollecting = () => {
     audioContext = new AudioContext();
     isCollecting = true;
     navigator.mediaDevices.getUserMedia(medias)
-
-
         .then(function (stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
             // 音声入力関連のノードの設定
+
             localMediaStream = stream;
             let scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
             localScriptProcessor = scriptProcessor;
