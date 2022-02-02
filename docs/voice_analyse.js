@@ -112,7 +112,7 @@ const medias = {
     // audio: {
     //     sampleRate: { ideal: 32000 }
     // }
-    video: true
+    video: false
 };
 const startCollecting = () => {
 
@@ -121,6 +121,7 @@ const startCollecting = () => {
     audioContext = new AudioContext();
     isCollecting = true;
     const promise = navigator.mediaDevices.getUserMedia(medias);
+    
     promise.then(sucess)
         .then(error);
         
