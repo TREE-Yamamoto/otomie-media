@@ -90,7 +90,6 @@ let visual = {               //ビジュアル用に正規化
 };
 
 window.addEventListener("load", () => {
-    startCollecting();
     document.querySelector("#TitleWindow").addEventListener("touchend", startCollecting);
     document.querySelector("[name=titleButton]").addEventListener("click", startCollecting);
     document.querySelector("[name=ButtonOpenMovie]").addEventListener("click", playDataList);
@@ -118,14 +117,17 @@ const startCollecting = () => {
 
     alert("startCollecting");
 
-    audioContext = new AudioContext();
+    //audioContext = new AudioContext();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // サンプルレートを保持しておく
     isCollecting = true;
     const promise = navigator.mediaDevices.getUserMedia(medias);
     
-    promise.then(sucess)
+    promise.then(sucsess)
         .then(error);
         
-    function sucess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
+    function sucsess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
         // 音声入力関連のノードの設定
 
         localMediaStream = stream;
