@@ -125,7 +125,7 @@ const startCollecting = () => {
     const promise = navigator.mediaDevices.getUserMedia(medias);
     
     promise.then(sucsess)
-        //.then(error);
+        .then(error);
         
     function sucsess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
         // 音声入力関連のノードの設定
@@ -145,10 +145,10 @@ const startCollecting = () => {
         timeDomainData = new Uint8Array(audioAnalyser.fftSize);
         mediastreamsource.connect(audioAnalyser);
     };
-    function error(e) {
-        alert(e);
-        console.log(e);
-    };
+    // function error(e) {
+    //     alert(e);
+    //     console.log(e);
+    // };
 
     createJsonDataFormat();
     addButtonEvent();
