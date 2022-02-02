@@ -125,7 +125,7 @@ const startCollecting = () => {
     const promise = navigator.mediaDevices.getUserMedia(medias);
     
     promise.then(sucsess)
-        .then(error);
+        //.then(error);
         
     function sucsess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
         // 音声入力関連のノードの設定
