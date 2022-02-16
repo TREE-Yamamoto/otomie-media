@@ -1,3 +1,28 @@
+<!-- <!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>エンコーディングテスト</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./js/audio_api.js"></script>
+</head>
+
+<body>
+    <button type="button" name="button" class="start_recording" id="btn_start_recording">レコード開始</button>
+    <button type="button" name="button" class="stop_recording" id="btn_stop_recording">ストップ</button>
+
+    <div id="realTimeGraphs">
+        スペクトラム<br>
+        <canvas id="canvasTimeDomain" width="500" height="250"></canvas><br>
+    </div>
+
+    <audio id="player" controls></audio>
+</body>
+
+</html> -->
+
+
 <!DOCTYPE html>
 <html>
 
@@ -5,7 +30,6 @@
     <meta charset="UTF-8" />
     <title>音声解析</title>
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.js"></script> -->
-
     <style type="text/css">
         #realTimeGraphs,
         #laterGraphs {
@@ -17,38 +41,35 @@
             display: flex;
         }
     </style>
+    <script src="voice_analyse.js"></script>
+    <script src="app.js"></script>
 
 </head>
 
 <body>
-    <div id="TitleWindow">
-        <canvas width="100" height="100"></canvas>
-        <button type="button" name="titleButton">title</button>
 
-        <!-- <button id="startRecording">解析開始</button>
-        <button id="endRecording">解析終了</button> -->
-    </div>>
+    <canvas width="100" height="100"></canvas>
+    <button id="TitleWindow" type="button" name="titleButton">micOn</button>
 
-    <div id="textbox">
-        <p id="p1" class="text_cat">テキスト1</p>
-        <p id="p2" class="text_cat">テキスト2</p>
-        <p id="p3" class="text_cat">テキスト3</p>
-    </div>
-    
 
-    <div id="ButtonStartRec" >
-        <button type="button" name="ButtonStartRec">収録開始</button>
-        <button type="button" name="ButtonStopRec">収録停止</button>
-    </div>
-    <div id="ButtonOpenMovie">
-        <button type="button" name="ButtonOpenMovie">再生</button>
-    </div>
+    <button id="drawRealTime" type="button">drawRealTime</button>
+    <button id="getArchive" type="button">getArchive</button>
+    <button id="initRec" type="button">initRec</button>
+    <button id="recording" type="button" name="ButtonStartRec">recording</button>
+    <input id = "recTime" type="text">
+    <button id="stopRec" type="button" name="ButtonStopRec">stopRec</button>
+    <button id="play" type="button" name="ButtonStopRec">play</button>
+    <button id="stopPlay" type="button" name="ButtonStopRec">stopPlay</button>
+    <button id="deleteData" type="button" name="ButtonDeleteData">deleteData</button>
+
+    <!-- <button id="ButtonOpenMovie" type="button">再生</button> -->
+
 
     <hr>
     <div id=GraphClum>
         <div id="realTimeGraphs">
             スペクトラム<br>
-            <canvas id="canvasFrequency" width="500" height="250"></canvas><br>
+            <canvas id="CanvasRealTime" width="500" height="250"></canvas><br>
             波形データ<br>
             <canvas id="canvasTimeDomain" width="500" height="250"></canvas><br>
             スペクトログラム<br>
@@ -60,7 +81,7 @@
 
         <div id="laterGraphs">
             スペクトラム<br>
-            <canvas id="A_canvasFrequency" width="500" height="250"></canvas><br>
+            <canvas id="CanvasRecMovie" width="500" height="250"></canvas><br>
             波形データ<br>
             <canvas id="A_canvasTimeDomain" width="500" height="250"></canvas><br>
             スペクトログラム<br>
@@ -68,7 +89,7 @@
 
         </div>
     </div>
-    <script src="voice_analyse.js"></script>
+
 </body>
 
-</html>
+</html> -->

@@ -20,7 +20,7 @@ let audioContext = null;
 let bufferSize = 1024;
 let audioData = []; // 録音データ
 let recordingFlg = false;
-
+let audioAnalyser;
 let canvasTimeDomain;
 window.addEventListener("load", () => {
   canvasTimeDomain = document.querySelector("#canvasTimeDomain");

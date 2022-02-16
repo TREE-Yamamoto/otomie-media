@@ -37,26 +37,17 @@ const colorMap = generateColorMap({ r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }
 
 // キャンバス
 //リアルタイム描画側
-let canvasTimeline = document.querySelector('#canvasTimeline');
-
-let canvasFrequency = document.querySelector('#canvasFrequency');
-
-let canvasTimeDomain = document.querySelector('#canvasTimeDomain');
-
-let canvasSpectrogram = document.querySelector('#canvasSpectrogram');
-let canvas_S_Context = canvasSpectrogram.getContext('2d');
-canvas_S_Context.fillStyle = colorMap[0];
-canvas_S_Context.fillRect(0, 0, canvasSpectrogram.width, canvasSpectrogram.height);
-
+let canvasTimeline;
+let canvasFrequency;
+let canvasTimeDomain;
+let canvasSpectrogram;
+let canvas_S_Context;
 //再生中描画する側
-let A_canvasFrequency = document.querySelector('#A_canvasFrequency');
+let A_canvasFrequency;
+let A_canvasTimeDomain;
+let A_canvasSpectrogram;
+let A_canvas_S_Context;
 
-let A_canvasTimeDomain = document.querySelector('#A_canvasTimeDomain');
-
-let A_canvasSpectrogram = document.querySelector('#A_canvasSpectrogram');
-let A_canvas_S_Context = A_canvasSpectrogram.getContext('2d');
-A_canvas_S_Context.fillStyle = colorMap[0];
-A_canvas_S_Context.fillRect(0, 0, A_canvasSpectrogram.width, A_canvasSpectrogram.height);
 
 
 let dataIndex = 0;              //再生中dataListを順に見るためのIndex
@@ -93,40 +84,47 @@ window.addEventListener("load", () => {
     document.querySelector("#TitleWindow").addEventListener("touchend", startCollecting);
     document.querySelector("[name=titleButton]").addEventListener("click", startCollecting);
     document.querySelector("[name=ButtonOpenMovie]").addEventListener("click", playDataList);
-
+    getCanvases();
 
 });
 
-// const demo = () =>{
-//     var textbox_element = document.querySelector("textbox");
-//     var new_element = document.createElement('p');
-//     new_element.textContent = '追加テキスト';
-//     textbox_element.appendChild(new_element);
-// }
+const getCanvases = () => {
+    canvasTimeline = document.querySelector('#canvasTimeline');
+    canvasFrequency = document.querySelector('#canvasFrequency');
+    canvasTimeDomain = document.querySelector('#canvasTimeDomain');
+    canvasSpectrogram = document.querySelector('#canvasSpectrogram');
+
+
+    canvas_S_Context = canvasSpectrogram.getContext('2d');
+    canvas_S_Context.fillStyle = colorMap[0];
+    canvas_S_Context.fillRect(0, 0, canvasSpectrogram.width, canvasSpectrogram.height);
+
+    A_canvasFrequency = document.querySelector('#A_canvasFrequency');
+    A_canvasTimeDomain = document.querySelector('#A_canvasTimeDomain');
+    A_canvasSpectrogram = document.querySelector('#A_canvasSpectrogram');
+    A_canvas_S_Context = A_canvasSpectrogram.getContext('2d');
+    A_canvas_S_Context.fillStyle = colorMap[0];
+    A_canvas_S_Context.fillRect(0, 0, A_canvasSpectrogram.width, A_canvasSpectrogram.height);
+}
+
 
 //解析開始
 
 const medias = {
     audio: true,
-    // audio: {
-    //     sampleRate: { ideal: 32000 }
-    // }
+
     video: false
 };
 const startCollecting = () => {
-
-    //alert("startCollecting");
-
-    //audioContext = new AudioContext();
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // サンプルレートを保持しておく
     isCollecting = true;
     const promise = navigator.mediaDevices.getUserMedia(medias);
-    
+
     promise.then(sucsess)
-        //.then(error);
-        
+    //.then(error);
+
     function sucsess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
         // 音声入力関連のノードの設定
 
