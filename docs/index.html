@@ -1,100 +1,103 @@
-<!-- <!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<head>
-    <meta charset="utf-8">
-    <title>エンコーディングテスト</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="./js/audio_api.js"></script>
-</head>
-
-<body>
-    <button type="button" name="button" class="start_recording" id="btn_start_recording">レコード開始</button>
-    <button type="button" name="button" class="stop_recording" id="btn_stop_recording">ストップ</button>
-
-    <div id="realTimeGraphs">
-        スペクトラム<br>
-        <canvas id="canvasTimeDomain" width="500" height="250"></canvas><br>
-    </div>
-
-    <audio id="player" controls></audio>
-</body>
-
-</html> -->
-
-
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>音声解析</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-    <style type="text/css">
-        #realTimeGraphs,
-        #laterGraphs {
-            width: 50%;
-            height: 100px;
-        }
-
-        #GraphClum {
-            display: flex;
-        }
-    </style>
-    <!-- <script src="app.js"></script> -->
-    <script src="voice_analyse.js"></script>
-
-    
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>オトミエ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="styles/destyle.min.css">
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 
 <body>
-    <div id="TitleWindow">
-        <canvas width="100" height="100"></canvas>
-        <button type="button" name="titleButton">title</button>
-
-    </div>>
-
-    <div id="textbox">
-        <p id="p1" class="text_cat">テキスト1</p>
-        <p id="p2" class="text_cat">テキスト2</p>
-        <p id="p3" class="text_cat">テキスト3</p>
-    </div>
-
-
-    <div id="ButtonStartRec">
-        <button type="button" name="ButtonStartRec">収録開始</button>
-        <button type="button" name="ButtonStopRec">収録停止</button>
-    </div>
-    <div id="ButtonOpenMovie">
-        <button type="button" name="ButtonOpenMovie">再生</button>
-    </div>
-
-    <hr>
-    <div id=GraphClum>
-        <div id="realTimeGraphs">
-            スペクトラム<br>
-            <canvas id="canvasFrequency" width="500" height="250"></canvas><br>
-            波形データ<br>
-            <canvas id="canvasTimeDomain" width="500" height="250"></canvas><br>
-            スペクトログラム<br>
-            <canvas id="canvasSpectrogram" width="500" height="250"></canvas><br>
-            タイムライン<br>
-            <canvas id="canvasTimeline" width="500" height="250"></canvas><br>
-
-        </div>
-
-        <div id="laterGraphs">
-            スペクトラム<br>
-            <canvas id="A_canvasFrequency" width="500" height="250"></canvas><br>
-            波形データ<br>
-            <canvas id="A_canvasTimeDomain" width="500" height="250"></canvas><br>
-            スペクトログラム<br>
-            <canvas id="A_canvasSpectrogram" width="500" height="250"></canvas><br>
-
+    <!-- スプラッシュ画面 -->
+    <div id="SplashWindow" class="Window">
+        <div id="SplashImageGrp" class="FadeOutSplash">
+            <img src="images/AppLogo.png" alt="アプリロゴ画像" id="AppLogoImage">
+            <img src="images/TreeRealize.png" alt="会社・事業部ロゴ画像" id="TreeRealizeImage">
         </div>
     </div>
 
+    <!-- ハウトゥ画面 -->
+    <div id="HowToWindow" class="Window">
+        <div class="Slider">
+            <!-- SliderContent:スライドする役目 -->
+            <div class="SliderContent Window">
+                <div id="ConceptCard">
+                    <img src="images/Howto01.png" id="HowtoImg01">
+                </div>
+            </div>
+            <div class="SliderContent Window">
+                <div id="MicOnCard">
+                    <img src="images/Howto02.png" id="HowtoImg02">
+                </div>
+            </div>
+            <div class="SliderContent Window">
+                <div id="StartCard">
+                    <img src="images/Howto03.png" id="HowtoImg03">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 収録画面 -->
+    <div id="RecWindow" class="Window">
+        <div id="TitleLogoRec"></div>
+        <div id="VisualRealTime"></div>
+        <canvas id="CanvasRealTime"></canvas>
+        <canvas id="CanvasWaveFormRec"></canvas>
+        <div id="RecBottomCover">
+            <div id="ButtonStartRecBack">
+                <!-- ↓クラスの付け替えで状態(NormalRecBtn StartRecBtn)切り替え -->
+                <div id="ButtonStartRec" class="NormalRecBtn">
+                    <div id="RecCountTextBack">
+                        <div id="RecCountText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 再生中画面 -->
+    <div id="PlayWindow" class="Window">
+        <!-- ↓クラスの付け替えで状態(RecNow RecFinish RecIcon RecPlayer)切り替え -->
+        <div id="RecContainer" class="RecNow">
+            <div id="WhiteFadePanelPlay"></div>
+            <canvas id="CanvasRecMovie"></canvas>
+            <canvas id="CanvasWaveFormPlay"></canvas>
+            <div id="RecDateTime"><img src="images/TimeIcon.png"></i> 2022年12月22日 12:35</div>
+            <div id="RecLocation"><img src="images/LocationIcon.png"></i> 港区南麻布三丁目</div>
+            <div id="PlayBottomCover">
+                <div id="ButtonStartPlayBack">
+                    <!-- 再生/停止ボタン -->
+                    <!-- ↓クラスの付け替えで状態(PlayMovieBtn StopMovieBtn)切り替え -->
+                    <div id="ButtonStartPlay" class="PlayMovieBtn"></div>
+                </div>
+                <div id="ButtonBackToRecWindow"><i class="fa fa-arrow-left"></i></div>
+                <div id="ButtonDeleteMovie"><i class="fa fa-ellipsis-v"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 画面上側UI -->
+    <div id="OverWindow" class="Window">
+        <div id="TitleLogo"><img src="images/TitleLogo.png"></div>
+        <div id="ClickDefence" class="Displaynone"></div>
+        <div id="WhiteFadePanelOver"></div>
+        <!-- ↓クラスの付け替えで状態(InactivePopupWindow ActivePopupWindow)切り替え -->
+        <div id="DeleteConfirmText" class="InactivePopupWindow">収録データを削除しますか？
+            <div id="DeleteText">削除</div>
+            <div id="CancelText">キャンセル</div>
+        </div>
+    </div>
+
+    <script src="script/otomie-visual.js"></script>
+    <script src="script/voice_analyse.js"></script>
+    <script src="script/app.js"></script>
+    <script src="script/UIManager.js"></script>
 </body>
 
-</html> -->
+</html>
