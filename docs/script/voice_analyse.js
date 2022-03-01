@@ -66,7 +66,7 @@ let playDeltaTime;
 let progressBarContainer = [];
 
 //app.jsからのコールバック一時保存用
-let drawReatTimeCB = {};
+let drawRealTimeCB = {};
 let recordingCB = {};
 
 let canvasTL;
@@ -182,14 +182,10 @@ const analyseVoice = () => {
     calcSharpness(data, dataIndex);
     let frameDataObj = createFrameDataObj();                            //1フレーム分のデータ生成
     createData(frameDataObj);
-
+    drawRTGraphic(realTimeCanvas, data, dataIndex, drawRealTimeCB);
+    drawRectangle(data, dataIndex, canvasTL);
     countRecTime(audioDeltaTime, recordingCB);
     judgeRecTime(afterStorageTime, recordingCB);
-    drawRTGraphic(realTimeCanvas, data, dataIndex, drawReatTimeCB);
-
-    drawRectangle(data, dataIndex, canvasTL);
-    getVisualData(data, dataIndex);
-
 
 }
 //オーディオ用のデルタ時間を計算
@@ -198,7 +194,7 @@ const calcAudioDeltaTime = () => {
     audioLastTime = audioCtx.currentTime;
     let audioFPS = 0;
     audioFPS = 1 / audioDeltaTime;
-    
+
     // fpsCanvasCtx.clearRect(0, 0, fpsCanvas.width, fpsCanvas.height);
     // fpsCanvasCtx.font = "24px serif";
     // fpsCanvasCtx.fillText(Math.floor(audioFPS) + " FPS", 0, 50);
@@ -264,8 +260,11 @@ const startRecording = (_recordingCB) => {
 };
 
 
-const stopRecording = (_stopRecCB) => {
+const stopRecording = (_canvas, _stopRecCB) => {
     if (isRecording) {
+        if (_canvas.hasChildNodes() == false) {
+            otomieVisual_Rec.setup(_canvas, 1024, 1024);
+        }
         isRecording = false;
         startCollectingTime = 0;                             //時間をリセット
 
@@ -303,9 +302,7 @@ const playDataList = (_canvas, callback) => {
             if (!isPlaying) {
                 isPlaying = true;
 
-                if (_canvas.hasChildNodes() == false) {
-                    otomieVisual_Rec.setup(_canvas, 1024, 1024);
-                }
+
                 //◇収録データの再生を開始
                 if (playAudioCtx.state !== "suspended") {
                     dataIndex = -1;
@@ -445,7 +442,7 @@ const restartDataList = (_restartPlayingCB) => {
             element.render(canvasPBCtx);
         });
         // progressBarContainer[0].render(canvasPBCtx);
-        progressBarContainer[0].x = (0 * playBarWidth) + playBarHeadPos;
+        // progressBarContainer[0].x = (0 * playBarWidth) + playBarHeadPos;
 
         _restartPlayingCB.onReady(true);
         _restartPlayingCB.onComplete(true);
@@ -573,8 +570,8 @@ const createData = (_frameData) => {
 
 
 //リアルタイム描画開始用のスイッチ
-const switchRealTime = (_canvas, _canvasTL, _drawReatTimeCB) => {
-    drawReatTimeCB = _drawReatTimeCB;
+const switchRealTime = (_canvas, _canvasTL, _drawRealTimeCB) => {
+    drawRealTimeCB = _drawRealTimeCB;
 
     if (isDrawRealTime == false) {
 
@@ -585,6 +582,7 @@ const switchRealTime = (_canvas, _canvasTL, _drawReatTimeCB) => {
         pushBar(canvasTL.width - margin, canvasTL.height / 2, 0, 0, getBarVelocity(), 'rgb(0, 0, 0)', performance.now());
 
         drawEndBar();
+        drawRealTimeCB.onReady(true);
         //◇リアルタイム描画開始処理
     }
     else if (isDrawRealTime == true) {
@@ -592,14 +590,14 @@ const switchRealTime = (_canvas, _canvasTL, _drawReatTimeCB) => {
     }
 }
 
-const drawRTGraphic = (_canvas, _data, _dataIndex, _drawReatTimeCB) => {
+const drawRTGraphic = (_canvas, _data, _dataIndex, _drawRealTimeCB) => {
     if (_canvas != null) {
         if (isDrawRealTime == true) {
             otomieVisual.updateSoundData(_data["dataList"][_dataIndex]["visual"]);
-            _drawReatTimeCB.onProcess(isDrawRealTime);
+            _drawRealTimeCB.onProcess(isDrawRealTime);
         }
         else {
-            _drawReatTimeCB.onProcess(isDrawRealTime);
+            _drawRealTimeCB.onProcess(isDrawRealTime);
         }
     } else {
         return;
@@ -621,9 +619,10 @@ const countRecTime = (_deltaTime, _recordingCB) => {
 const judgeRecTime = (_afterAtorageTime, _recordingCB) => {
     if (recTime >= _afterAtorageTime) {
         debugLog("recTime >= afterAtorageTime");
-        stopRecording();
+
         recTime = 0;
         _recordingCB.onComplete(true);
+        // stopRecording();
     }
     else {
         return;

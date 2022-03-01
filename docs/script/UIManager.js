@@ -127,6 +127,16 @@ const getArchiveCallBack = {
                 nowState == State.isRecorded; //収録完了ステートに切替
             }
         }
+    },
+    getImage: (thumbnailImg) => {
+        console.log('UI通知-getArchive-サムネイル画像を入れます');
+        // CanvasRecMovie.style.backgroundColor = 'red';//これはできた
+        // CanvasRecMovie.style.backgroundImage = 'url(http://alphasis.info/wp-content/uploads/2012/01/gimp-tutorial-12012402.jpg)'; //これもできた
+        // CanvasRecMovie.style.backgroundImage = 'url(thumbnailImg)';
+        // if (CanvasRecMovie.hasChildNodes() == true) { //子要素がいるなら
+        //     console.log('UI通知-CanvasRecMovieは子要素持っている');
+        //     CanvasRecMovie.firstChild.classList.add('Displaynone'); //CanvasRecMovieの子を見た目OFF
+        // }
     }
 };
 
@@ -186,7 +196,7 @@ const recClick = () => {
         initRec(initRecCallBack);
     } else { //収録中なら
         console.log('ストップ押された');
-        stopRec(stopRecCallBack); //収録停止
+        stopRec(CanvasRecMovie, stopRecCallBack); //収録停止
     }
 }
 buttonStartRec.addEventListener('click', recClick);
@@ -218,7 +228,6 @@ const recordingCallBack = {
     onProcess: (recCount) => {
         // 時間をテキストに入れる
         recCountText.textContent = (countUI - recCount).toFixed(0);
-        // recCountText.textContent = recCount.toFixed(0);
     },
     onComplete: (tf) => {
         if (tf == true) {
@@ -421,6 +430,10 @@ const playCallBack = {
             console.log("UI通知-play-再生が開始されました〇");
             changeMovieBtnIcon(); //アイコン切替関数
             isSaveDataPlay = true; //再生中フラグON
+            if (CanvasRecMovie.firstChild.classList.contains('Displaynone') == true) {
+                CanvasRecMovie.firstChild.classList.remove('Displaynone'); //CanvasRecMovieの子を見た目ON
+            }
+
         }
         else {
             console.log("UI通知-play-再生が開始できませんでした×");
@@ -434,7 +447,7 @@ const stopPlayingCallBack = {
             console.log("UI通知-stopPlaying-再生が停止されました〇");
             isSaveDataPlay = false; //再生中フラグOFF
             changeMovieBtnIcon(); //アイコン切替関数
-            if(nowState == State.isClickedDelete){
+            if (nowState == State.isClickedDelete) {
                 toggleDeleteConfirm(); //削除確認ウインドウ表示
             }
         }
@@ -501,3 +514,7 @@ function keypress_ivent(e) {
 }
 
 
+
+
+// 呼ばれたタイミングでCanvasの子要素のcssを削除
+//

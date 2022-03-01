@@ -74,16 +74,16 @@ const drawRealTime = (_canvas, _canvasTL, _canvasPB, {
     // otimieVisual.render();
 
 
-    if (onReady && typeof onReady === "function") {
-        onReady(true);
-    }
-    if (onProcess && typeof onProcess === "function") {
-        onProcess(isDrawRealTime);
+    // if (onReady && typeof onReady === "function") {
+    //     onReady(true);
+    // }
+    // if (onProcess && typeof onProcess === "function") {
+    //     onProcess(isDrawRealTime);
 
-    }
-    if (onComplete && typeof onComplete === "function") {
-        onComplete(true);
-    }
+    // }
+    // if (onComplete && typeof onComplete === "function") {
+    //     onComplete(true);
+    // }
 }
 
 const getArchive = (_canvas, {
@@ -169,7 +169,7 @@ const recording = ({
 
 
 
-const stopRec = ({
+const stopRec = (_canvas,{
     onReady = () => { },
     onComplete = () => { },
 }) => {
@@ -178,7 +178,7 @@ const stopRec = ({
     // ・
     // ・
     // ・
-    stopRecording({ onReady, onComplete });
+    stopRecording(_canvas,{ onReady, onComplete });
     console.log("stopRec");
 
     // if (onReady && typeof onReady === "function") {
