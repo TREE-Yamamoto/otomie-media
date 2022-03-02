@@ -505,7 +505,7 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.objectCount = calcObjectCount(pitch, volume);
     visual.objectCount = pitch;
     visual.objectShape = sharpness;
-    visual.objectShape = 0.8;
+    visual.objectShape = 0.3;
     visual.speed = pitch * 0.1;
 
     frameData.raw = raw;
