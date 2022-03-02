@@ -105,6 +105,13 @@ const displayNoneStartCard = () => {
 // はじめましょう画面クリックイベント
 startCard.addEventListener('click', clickedStartCard);
 
+//サムネイル画像
+const thumbnailImage = document.getElementById('ThumbnailImage');
+let thumbnailSrc; //サムネイル画像のデータ変数
+// サムネイル画像を入れ替える関数
+const changethumbnail = (thumbnailSrc) => {
+    thumbnailImage.style.backgroundImage =  thumbnailSrc;
+};
 // getArchiveコールバック
 const getArchiveCallBack = {
     getNum: (num) => {
@@ -130,17 +137,14 @@ const getArchiveCallBack = {
     },
     getImage: (thumbnailImg) => {
         console.log('UI通知-getArchive-サムネイル画像を入れます');
-        // CanvasRecMovie.style.backgroundColor = 'red';//これはできた
-        // CanvasRecMovie.style.backgroundImage = 'url(http://alphasis.info/wp-content/uploads/2012/01/gimp-tutorial-12012402.jpg)'; //これもできた
-        // CanvasRecMovie.style.backgroundImage = 'url(thumbnailImg)';
-        // if (CanvasRecMovie.hasChildNodes() == true) { //子要素がいるなら
-        //     console.log('UI通知-CanvasRecMovieは子要素持っている');
-        //     CanvasRecMovie.firstChild.classList.add('Displaynone'); //CanvasRecMovieの子を見た目OFF
-        // }
+        CanvasRecMovie.style.backgroundImage =  "url(" + thumbnailImg + ")";
+        thumbnailSrc =  "url(" + thumbnailImg + ")"; //サムネイル画像のデータ変数差し替え
+        if (CanvasRecMovie.hasChildNodes() == true) { //子要素がいるなら
+            console.log('UI通知-CanvasRecMovieは子要素持っている');
+            CanvasRecMovie.firstChild.classList.add('Displaynone'); //CanvasRecMovieの子を見た目OFF
+        }
     }
 };
-
-
 
 // 再生画面 - 状態(見た目)切り替え関数 ---↓↓↓↓↓↓↓↓↓↓↓↓---------------------------------------------------------
 const recContainer = document.getElementById('RecContainer');
@@ -227,7 +231,7 @@ const recordingCallBack = {
     },
     onProcess: (recCount) => {
         // 時間をテキストに入れる
-        recCountText.textContent = (countUI - recCount).toFixed(0);
+        recCountText.textContent = Math.floor(countUI - recCount);
     },
     onComplete: (tf) => {
         if (tf == true) {
@@ -304,6 +308,8 @@ recContainer.addEventListener('transitionend', () => {
     if (recContainer.classList.contains('RecIcon') == true) {
         console.log('UI通知- 操作できない解除')
         removeDefenceClick(); // 画面操作を受け付けない処理を解除
+        changethumbnail(thumbnailSrc); //サムネイル画像の中身入れ替える
+        thumbnailImage.classList.remove('Displaynone'); //サムネイル画像を現す
     }
 });
 // 〇〇〇〇収録画面 - 収録ボタン関連処理 ---↑↑↑↑↑↑↑↑↑↑↑↑-----------------------------------------------------
@@ -317,6 +323,7 @@ const changePlayerWindowFunc = () => {
     console.log('UI通知-再生画面に切替');
     changeRecPlayer(); //再生画面を再生状態に
     defenceClick(); //クリック抑止
+    thumbnailImage.classList.add('Displaynone'); //サムネイル画像を消す
 };
 CanvasRecMovie.addEventListener('click', changePlayerWindowFunc);
 // 再生画面が再生状態になるアニメ終わったら呼ばれる
@@ -508,7 +515,7 @@ function keypress_ivent(e) {
         recContainer.classList.add('RecIcon');
     }
     if (e.key === 'd' || e.key === 'D') {
-        console.log(isRecPlay);
+        console.log('あ' + thumbnailImg);
     }
     return false;
 }
