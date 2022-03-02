@@ -151,7 +151,7 @@ const onAudioProcess = (e) => {
     bufferData = new Float32Array(input);
     analyseVoice(spectrums, timeDomainArray);
     // console.log((performance.memory.usedJSHeapSize) / 1000 + "bytes");
-    
+
     sampleArea.innerHTML = ((performance.memory.usedJSHeapSize) / 1000000).toFixed(0) + "MBytes";
 };
 
@@ -178,11 +178,11 @@ const analyseVoice = (_spectrums, _timeDomainArray) => {
     createData(frameDataObj);
     let dataIndex = data["dataList"].length - 1;
 
-    drawRTGraphic(frameDataObj, drawRealTimeCB);
-    frameDataObj = null;
+    // drawRTGraphic(frameDataObj, drawRealTimeCB);
     drawRectangle(data, dataIndex, canvasTL);
     countRecTime(audioDeltaTime, recordingCB);
     judgeRecTime(recordingCB);
+    frameDataObj = null;
 
 }
 
@@ -355,13 +355,17 @@ const playPCMData = () => {
     let playDataSource = playAudioCtx.createBufferSource();
     let PCMdata = getPCMData(playingData);
     let audioBuffer = playAudioCtx.createBuffer(1, PCMdata.length, audioCtx.sampleRate);
+    let gainNode = playAudioCtx.createGain();
+    playDataSource.connect(gainNode);
+    gainNode.gain.value = 3.4;
     audioBuffer.getChannelData(0).set(PCMdata);
     playDataSource.buffer = audioBuffer;
     playDataSource.loop = false;                   //. ループ再生するか？
     playDataSource.loopStart = 0;                  //. オーディオ開始位置（秒単位）
     playDataSource.loopEnd = audioBuffer.duration; //. オーディオ終了位置（秒単位）
     playDataSource.playbackRate.value = 1.0;       //. 再生速度＆ピッチ
-    playDataSource.connect(playAudioCtx.destination);
+    // playDataSource.connect(playAudioCtx.destination);
+    gainNode.connect(playAudioCtx.destination);
     playDataSource.start(0);
 }
 
@@ -504,7 +508,6 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.brightness = pitch;
     visual.objectCount = calcObjectCount(pitch, volume);
     visual.objectCount = pitch;
-    visual.objectShape = sharpness;
     visual.objectShape = 0.3;
     visual.speed = pitch * 0.1;
 
