@@ -1,14 +1,14 @@
 @charset "UTF-8";
 
-/* 位置、組み、サイズ、形、線、色 */
-
-
 body {
     position: relative;
-
     margin: 0;
-    /* あとで消す */
-    background-color: rgb(204, 204, 204);
+    width: 428px;
+    height: 926px;
+    user-select: none;
+    -webkit-user-select: none; /* Chrome, Safari, and Opera 選択無効*/
+    touch-action: manipulation; /*ダブルタップ無効*/
+    background-color: rgb(250, 250, 250);
 }
 
 /* すべての画面共通の外枠 */
@@ -51,7 +51,7 @@ body {
 /* Splash画面画像フェードアウト */
 .FadeOutSplash {
     animation-name: fadeOutSplash;
-    animation-duration: 1.5s;
+    animation-duration: 2.5s;
     animation-timing-function: ease;
     animation-fill-mode: forwards;
 }
@@ -131,6 +131,33 @@ body {
     }
 }
 
+/* タップしてつぎへ */
+.HowtoNext {
+    position: absolute;
+    bottom: 79px;
+    left: 0px;
+    width: 428px;
+    height: 25px;
+    animation-name: howtoNextAnim;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 30;
+}
+@keyframes howtoNextAnim {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.2;
+        transform: scale(0.95, 0.95);
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
 /*-------------------- 収録画面 -----------------------*/
 #RecWindow {
     background-color: rgb(255, 255, 255);
@@ -202,7 +229,7 @@ body {
     border-radius: 50%;
 }
 
-/* 収録開始ボタンの背景 */
+/* 収録開始ボタン */
 #ButtonStartRec {
     position: absolute;
     bottom: 5px;
@@ -231,7 +258,7 @@ body {
     left: 17px;
     width: 36px;
     height: 36px;
-    border-radius: 25%;
+    border-radius: 20%;
     line-height: 38px;
     font-family: sans-serif;
     font-weight: 100;
@@ -244,12 +271,25 @@ body {
 #ButtonStartRec.NormalRecBtn,
 #ButtonStartRec.NormalRecBtn #RecCountText {
     background-color: rgb(18, 77, 274);
+    border-radius: 50%;
 }
 
 /* 録画ボタン -録画状態 */
 #ButtonStartRec.StartRecBtn,
 #ButtonStartRec.StartRecBtn #RecCountText {
     background-color: rgb(255, 84, 27);
+}
+
+/* サムネイル画像 */
+#ThumbnailImage {
+    position: absolute;
+    bottom: 40px;
+    left: 30px;
+    width: 105px;
+    height: 105px;
+    border-radius: 15%;
+    background-size: contain;
+    background-color: rgb(98, 218, 255);
 }
 
 /*--------------------- 再生画面(収録済み) -------------------------*/
@@ -277,12 +317,13 @@ body {
 }
 
 /* 再生画面のグラフィックの親 */
-#CanvasRecMovie>canvas {
+#CanvasRecMovie {
     overflow: hidden;
+    background-size: contain;
 }
-
 /* 再生画面のグラフィック */
 #CanvasRecMovie>canvas {
+    overflow: hidden;
     width: 100%;
     height: 100%;
 }
@@ -308,8 +349,10 @@ body {
 /* それ以外非表示 */
 #RecContainer.RecFinish #WhiteFadePanelPlay,
 #RecContainer.RecFinish #CanvasWaveFormPlay,
-#RecContainer.RecFinish #RecDateTime,
-#RecContainer.RecFinish #RecLocation,
+#RecContainer.RecFinish #RecDateTimeImg,
+#RecContainer.RecFinish #RecLocationImg,
+#RecContainer.RecFinish #RecDateTimeText,
+#RecContainer.RecFinish #RecLocationText,
 #RecContainer.RecFinish #PlayBottomCover {
     display: none;
 }
@@ -337,15 +380,15 @@ body {
 
 /* その他 */
 #RecContainer.RecIcon #CanvasWaveFormPlay,
-#RecContainer.RecIcon #RecDateTime,
-#RecContainer.RecIcon #RecLocation,
+#RecContainer.RecIcon #RecDateTimeImg,
+#RecContainer.RecIcon #RecLocationImg,
+#RecContainer.RecIcon #RecDateTimeText,
+#RecContainer.RecIcon #RecLocationText,
 #RecContainer.RecIcon #PlayBottomCover,
 #RecContainer.RecIcon #ButtonStartPlayBack,
 #RecContainer.RecIcon #ButtonStartPlay,
 #RecContainer.RecIcon #ButtonBackToRecWindow,
-#RecContainer.RecIcon #ButtonDeleteMovie,
-#RecContainer.RecIcon #RecDateTime,
-#RecContainer.RecIcon #RecLocation {
+#RecContainer.RecIcon #ButtonDeleteMovie {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -359,17 +402,24 @@ body {
 #RecContainer.RecIcon #ButtonDeleteMovie {
     line-height: 30px;
     text-align: center;
-    font-family: sans-serif;
     font-size: 0px;
     color: rgb(230, 230, 230);
 }
 
-/* 日時場所共通 */
-#RecContainer.RecIcon #RecDateTime,
-#RecContainer.RecIcon #RecLocation {
+/* 日時場所画像共通 */
+#RecContainer.RecIcon #RecDateTimeImg,
+#RecContainer.RecIcon #RecLocationImg {
+    position: absolute;
+    left: 75px;
+    height: 20px;
+    width: 20px;
+}
+/* 日時場所テキスト共通 */
+#RecContainer.RecIcon #RecDateTimeText,
+#RecContainer.RecIcon #RecLocationText {
     line-height: 20px;
     text-align: left;
-    font-family: sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 0px;
     color: rgb(127, 127, 127);
 }
@@ -398,15 +448,17 @@ body {
 #RecContainer.RecIcon #WhiteFadePanelPlay,
 #RecContainer.RecIcon #CanvasRecMovie,
 #RecContainer.RecIcon #CanvasWaveFormPlay,
-#RecContainer.RecIcon #RecDateTime,
-#RecContainer.RecIcon #RecLocation,
+#RecContainer.RecIcon #RecDateTimeImg,
+#RecContainer.RecIcon #RecLocationImg,
+#RecContainer.RecIcon #RecDateTimeText,
+#RecContainer.RecIcon #RecLocationText,
 #RecContainer.RecIcon #PlayBottomCover,
 #RecContainer.RecIcon #ButtonStartPlayBack,
 #RecContainer.RecIcon #ButtonStartPlay,
 #RecContainer.RecIcon #ButtonBackToRecWindow,
 #RecContainer.RecIcon #ButtonDeleteMovie,
 #RecContainer.RecIcon #ButtonStartPlay.PlayMovieBtn::before {
-    transition-duration: 0.75s;
+    transition-duration: 0.5s;
 }
 
 /* -----------------プレイヤー状態------------------ */
@@ -437,33 +489,48 @@ body {
     left: 0;
     width: 100%;
     height: 120px;
-    background-color: rgb(255, 225, 54);
+    /* background-color: rgb(255, 225, 54); */
 }
-
-/* 日時場所共通 */
-#RecContainer.RecPlayer #RecDateTime,
-#RecContainer.RecPlayer #RecLocation {
+/* 日時場所画像共通 */
+#RecContainer.RecPlayer #RecDateTimeImg,
+#RecContainer.RecPlayer #RecLocationImg {
     position: absolute;
-    left: 90px;
+    left: 75px;
     height: 20px;
-    width: 100%;
+    width: 20px;
+}
+/* 日時画像 */
+#RecContainer.RecPlayer #RecDateTimeImg {
+    bottom: 219px;
+}
+/* 場所画像 */
+#RecContainer.RecPlayer #RecLocationImg {
+    bottom: 189px;
+}
+/* 日時場所テキスト共通 */
+#RecContainer.RecPlayer #RecDateTimeText,
+#RecContainer.RecPlayer #RecLocationText {
+    position: absolute;
+    left: 102px;
+    height: 20px;
+    width: 353px;
     line-height: 20px;
     text-align: left;
-    font-family: sans-serif;
-    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
     font-size: 20px;
     letter-spacing: 0em;
     color: rgb(127, 127, 127);
 }
 
-/* 日時 */
-#RecContainer.RecPlayer #RecDateTime {
+/* 日時テキスト */
+#RecContainer.RecPlayer #RecDateTimeText {
     position: absolute;
     bottom: 219px;
 }
 
-/* 場所 */
-#RecContainer.RecPlayer #RecLocation {
+/* 場所テキスト */
+#RecContainer.RecPlayer #RecLocationText {
     position: absolute;
     bottom: 189px;
 }
@@ -543,7 +610,7 @@ body {
     height: 30px;
     line-height: 30px;
     text-align: center;
-    font-family: sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 35px;
     color: rgb(230, 230, 230);
 }
@@ -564,8 +631,10 @@ body {
 #RecContainer.RecPlayer #WhiteFadePanelPlay,
 #RecContainer.RecPlayer #CanvasRecMovie,
 #RecContainer.RecPlayer #CanvasWaveFormPlay,
-#RecContainer.RecPlayer #RecDateTime,
-#RecContainer.RecPlayer #RecLocation,
+#RecContainer.RecPlayer #RecDateTimeImg,
+#RecContainer.RecPlayer #RecLocationImg,
+#RecContainer.RecPlayer #RecDateTimeText,
+#RecContainer.RecPlayer #RecLocationText,
 #RecContainer.RecPlayer #PlayBottomCover,
 #RecContainer.RecPlayer #ButtonStartPlayBack,
 #RecContainer.RecPlayer #ButtonStartPlay,
@@ -590,14 +659,14 @@ body {
 
 /* 灰色(クリック抑止板用) */
 .GrayBackColor {
-    background-color: rgba(110, 110, 110, 0.4);
+    background-color: rgba(110, 110, 110, 0.5);
 }
 
 /* タイトルロゴ */
 #TitleLogo {
     position: absolute;
     top: 83px;
-    width: 100%;
+    width: 428px;
     height: 46px;
 }
 
@@ -646,11 +715,12 @@ body {
     }
 }
 
-/* 削除確認テキスト */
+/* 削除確認テキスト-アクティブ状態 */
 #DeleteConfirmText.ActivePopupWindow {
     pointer-events: auto;
     position: absolute;
-    top: 273px;
+    /* top: 273px; */
+    top: 398px;
     left: 64px;
     width: 300px;
     height: 130px;
@@ -659,14 +729,13 @@ body {
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.35);
     line-height: 75px;
     text-align: center;
-    font-family: sans-serif;
-    font-weight: 500;
-    font-size: 19px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
     letter-spacing: 0em;
     color: rgb(51, 51, 51);
 }
-
-/* 削除テキスト */
+/* 削除テキスト-アクティブ状態 */
 #DeleteConfirmText.ActivePopupWindow #DeleteText {
     position: absolute;
     top: 65px;
@@ -677,14 +746,13 @@ body {
     background-color: rgb(200, 200, 200);
     line-height: 40px;
     text-align: center;
-    font-family: sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-weight: 500;
     font-size: 15px;
     letter-spacing: 0em;
     color: rgb(51, 51, 51);
 }
-
-/* キャンセルテキスト */
+/* キャンセルテキスト-アクティブ状態 */
 #DeleteConfirmText.ActivePopupWindow #CancelText {
     position: absolute;
     top: 65px;
@@ -695,20 +763,118 @@ body {
     background-color: rgb(18, 77, 274);
     line-height: 40px;
     text-align: center;
-    font-family: sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-weight: 500;
     font-size: 15px;
     letter-spacing: 0em;
     color: rgb(255, 255, 255);
 }
-
-#DeleteConfirmText.InactivePopupWindow,
-#DeleteConfirmText.InactivePopupWindow #DeleteText,
-#DeleteConfirmText.InactivePopupWindow #CancelText {
-    display: none;
+#DeleteConfirmText.ActivePopupWindow,
+#DeleteConfirmText.ActivePopupWindow #DeleteText,
+#DeleteConfirmText.ActivePopupWindow #CancelText {
+    transition-duration: 0.2s;
+}
+#DeleteConfirmText.ActivePopupWindow #DeleteText:active,
+#DeleteConfirmText.ActivePopupWindow #CancelText:active {
+    transform: scale(0.95, 0.95);
 }
 
-/* transformテスト */
-.transform {
-    transform: scale(2, 2) translate(-50%, -50%);
+/* 削除確認テキスト-非アクティブ状態 */
+#DeleteConfirmText.InactivePopupWindow {
+    pointer-events: none; /* 見えない時に押せないように */
+    position: absolute;
+    /* top: 294.5px; */
+    top: 419.5px;
+    left: 114px;
+    width: 200px;
+    height: 87px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0);
+    box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0);
+    line-height: 50px;
+    text-align: center;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 200;
+    font-size: 12px;
+    letter-spacing: 0em;
+    color: rgba(51, 51, 51, 0);
+}
+/* 削除テキスト-非アクティブ状態 */
+#DeleteConfirmText.InactivePopupWindow #DeleteText {
+    position: absolute;
+    top: 43.5px;
+    left: 20px;
+    width: 73px;
+    height: 27px;
+    border-radius: 5px;
+    background-color: rgba(200, 200, 200, 0);
+    line-height: 27px;
+    text-align: center;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0em;
+    color: rgba(51, 51, 51, 0);
+}
+/* キャンセルテキスト-非アクティブ状態 */
+#DeleteConfirmText.InactivePopupWindow #CancelText {
+    position: absolute;
+    top: 43.5px;
+    left: 107px;
+    width: 73px;
+    height: 27px;
+    border-radius: 5px;
+    background-color: rgba(18, 77, 274, 0);
+    line-height: 27px;
+    text-align: center;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0em;
+    color: rgba(255, 255, 255, 0);
+}
+/* トランジション */
+/* #DeleteConfirmText.InactivePopupWindow,
+#DeleteConfirmText.InactivePopupWindow #DeleteText,
+#DeleteConfirmText.InactivePopupWindow #CancelText {
+    transition-duration: 0.2s;
+} */
+
+/* ↓作業中 */
+/* 削除完了テキスト */
+#DeleteCompleteText {
+    pointer-events: none;
+    position: absolute;
+    top: 40px;
+    left: 24px;
+    width: 380px;
+    height: 70px;
+    border-radius: 10px;
+    background-color: rgba(230, 230, 230, 0.7);
+    box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.15);
+    line-height: 70px;
+    text-align: center;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: bold;
+    font-size: 19px;
+    letter-spacing: 0.1em;
+    color: rgb(51, 51, 51);
+    animation-name: fadeOutDeleteCompleteText;
+    animation-duration: 2.5s;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeOutDeleteCompleteText {
+    0% {
+        opacity: 0;
+        transform: translateY(-80px);
+    }
+    45%,55% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-80px);
+    }
 }
