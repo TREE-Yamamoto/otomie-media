@@ -143,8 +143,6 @@ const analyseVoice = (_bufferData, _spectrums, _timeDomainArray) => {
 
     let audioDeltaTime = audioCtx.currentTime - audioLastTime;
     audioLastTime = audioCtx.currentTime;
-    // console.log(bars.length);
-    
     // let tracks = localMediaStream.getTracks();
     // for (let i = 0; i < tracks.length; i++) {
 
@@ -202,6 +200,7 @@ const prepareRec = (_initRecCB) => {
 const startRecording = (_recordingCB) => {
     ////debugLog("startRecorging");
     if (!isRecording) {
+        isRecording = true;
         startRecTime = performance.now() - (beforeStorageTime * 1000);
         recTime = 0;
 
@@ -285,6 +284,7 @@ const playDataList = (_canvas, callback) => {
                     //debugLog("playAudioCtx", playAudioCtx);
                     playAudioCtx.resume();
                 }
+
                 otomieVisual_Rec.play();
                 animateCanvases(_canvas, canvasPB, callback);
                 callback.onReady(true);
@@ -500,9 +500,9 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.saturation = volumePeak / 255;
     visual.brightness = pitch;
     visual.objectCount = calcObjectCount(pitch, volume);
-    // visual.objectCount = 1;
+    visual.objectCount = 1;
     visual.objectShape = pitch;
-    // visual.objectShape = value+0.16667;
+    // visual.objectShape = value;
 
 
     visual.speed = pitch * 0.1;
@@ -522,9 +522,9 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
 let count = 0;
 let value = 0;
 const conuntUP = () => {
-    count += 1.0;
-    value = count % 5;
-    value = value / 5;
+    count += 1.01;
+    value = count % 6;
+    value = value / 6;
 
     // return value;    
 }
@@ -665,7 +665,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
             progressBarContainer.splice(0);
             progressBarContainer.push(new progressBar(playBarHeadPos, 0, 1, canvasPB.height));
             progressBarContainer[0].render(canvasPBCtx);
-            // console.log(data["dataList"].length);
+            console.log(data["dataList"].length);
         }
 
         drawTime = (performance.now() / 1000) - startPlayTime;
@@ -695,6 +695,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
             // console.log(dataIndex);
             // console.log(n_index);
             progressBarContainer[0].x = (n_index * playBarWidth) + playBarHeadPos;
+            console.log(progressBarContainer[0].x);
             canvasPBCtx.clearRect(0, 0, canvasPB.width, canvasPB.height);
             playBars.forEach((element) => {
                 // element.color = "rgb(0,0,0)";
