@@ -16,18 +16,9 @@ let playBarWidth;
 let playBarHeadPos;
 
 //音源保存用変数
-// let localMediaStream = null;
-// let localScriptProcessor = null;
 let audioCtx;                                   //オーディオコンテキスト格納変数
 const bufferSize = 1024;                          //音源データ用バッファサイズ
-let bufferData;                                 //音源データ用バッファ
-
 let playAudioCtx;                               //再生用オーディオコンテキスト
-
-let spectrums;                                  //周波数ごとのデータを保存する配列
-let timeDomainArray;                            //時間領域ごとのデータを保存する配列
-
-let sharpness = 0;
 
 //状態管理
 let isCollecting = false;                       //収音中
@@ -36,7 +27,6 @@ let isPlaying = false;                          //再生中
 
 //描画スイッチ
 let isDrawRealTime = false;
-
 let audioAnalyser;
 
 let dataIndex = 0;                              //再生中dataListを順に見るためのIndex
@@ -84,7 +74,7 @@ window.addEventListener("load", () => {
 
 const startCollecting = (_micOnCB = {}) => {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    debugLog("startCollecting");
+    //debugLog("startCollecting");
     // サンプルレートを保持しておく
     isCollecting = true;
     const promise = navigator.mediaDevices.getUserMedia(
@@ -97,7 +87,7 @@ const startCollecting = (_micOnCB = {}) => {
     );
 
     promise.then(sucsess)
-    //.then(error);
+        .then(error);
 
     function sucsess(stream) {       //メディアアクセス要求が承認されたときに呼ばれる関数
         // 音声入力関連のノードの設定
@@ -110,57 +100,51 @@ const startCollecting = (_micOnCB = {}) => {
         // 音声解析関連のノードの設定
         audioAnalyser = audioCtx.createAnalyser();
         audioAnalyser.fftSize = 2048;
-        fsDivN = audioCtx.sampleRate / audioAnalyser.fftSize;           //周波数分解能
-
+        fsDivN = audioCtx.sampleRate / audioAnalyser.fftSize;
         scriptProcessor.onaudioprocess = onAudioProcess;
-
         scriptProcessor.connect(audioCtx.destination);
-
-        //frequencyData = new Uint8Array(audioAnalyser.frequencyBinCount);
-        //timeDomainData = new Uint8Array(audioAnalyser.fftSize);
         mediastreamsource.connect(audioAnalyser);
-
+        createJsonDataFormat();
+        _micOnCB.onReady(true);
     };
-    // function error(e) {
-    //     alert(e);
-    //     debugLog(e);
-    // };
+    function error(e) {
+        //debugLog(e);
+    };
 
-    createJsonDataFormat();
 
-    _micOnCB.onReady(true);
 };
 
 // 録音バッファ作成（録音中自動で繰り返し呼び出される）
 const onAudioProcess = (e) => {
-
     if (audioLastTime < 0) {
-        console.log("audioLastTime < 0");
         audioLastTime = audioCtx.currentTime;
-
-        spectrums = new Uint8Array(audioAnalyser.frequencyBinCount);        //周波数領域の振幅データ格納用配列を生成
-        timeDomainArray = new Uint8Array(audioAnalyser.fftSize);            //時間領域の振幅データ格納用配列を生成
-
         return;
     }
     if (!isCollecting) {
         return;
     }
-    // 音声のバッファを作成，インプットデータを保存
-    let input = e.inputBuffer.getChannelData(0);    //PCMデータ：信号の強度が格納されている.
-    bufferData = new Float32Array(input);
-    analyseVoice(spectrums, timeDomainArray);
-    // console.log((performance.memory.usedJSHeapSize) / 1000 + "bytes");
+    let spectrums = new Uint8Array(audioAnalyser.frequencyBinCount);        //周波数領域の振幅データ格納用配列を生成
+    let timeDomainArray = new Uint8Array(audioAnalyser.fftSize);            //時間領域の振幅データ格納用配列を生成
 
+    let input = e.inputBuffer.getChannelData(0);    //PCMデータ：信号の強度が格納されている.
+    let bufferData = new Float32Array(input);
+    analyseVoice(bufferData, spectrums, timeDomainArray);
     sampleArea.innerHTML = ((performance.memory.usedJSHeapSize) / 1000000).toFixed(0) + "MBytes";
+
+    delete input;
+    delete bufferData;
+    delete spectrums;
+    delete timeDomainArray;
 };
 
 //解析用処理
-const analyseVoice = (_spectrums, _timeDomainArray) => {
+const analyseVoice = (_bufferData, _spectrums, _timeDomainArray) => {
     // fsDivN = audioCtx.sampleRate / audioAnalyser.fftSize;           //周波数分解能
 
     let audioDeltaTime = audioCtx.currentTime - audioLastTime;
     audioLastTime = audioCtx.currentTime;
+    // console.log(bars.length);
+    
     // let tracks = localMediaStream.getTracks();
     // for (let i = 0; i < tracks.length; i++) {
 
@@ -174,15 +158,24 @@ const analyseVoice = (_spectrums, _timeDomainArray) => {
 
     audioAnalyser.getByteFrequencyData(_spectrums);                      //周波数領域の振幅データを配列に格納：一瞬の値
     audioAnalyser.getByteTimeDomainData(_timeDomainArray);               //時間領域の振幅データを配列に格納
-    let frameDataObj = createFrameDataObj(bufferData, _spectrums, _timeDomainArray, audioDeltaTime);                            //1フレーム分のデータ生成
+
+
+    let frameDataObj = createFrameDataObj(_bufferData, _spectrums, _timeDomainArray, audioDeltaTime);                            //1フレーム分のデータ生成
     createData(frameDataObj);
+
     let dataIndex = data["dataList"].length - 1;
 
-    // drawRTGraphic(frameDataObj, drawRealTimeCB);
+
+    drawRTGraphic(frameDataObj, drawRealTimeCB);
     drawRectangle(data, dataIndex, canvasTL);
     countRecTime(audioDeltaTime, recordingCB);
     judgeRecTime(recordingCB);
-    frameDataObj = null;
+
+    delete audioDeltaTime;
+    delete _spectrums;
+    delete _bufferData;
+    delete _timeDomainArray;
+    delete frameDataObj;
 
 }
 
@@ -195,7 +188,8 @@ const createJsonData = (_data) => {
 //受けとったJsonデータをオブジェクトにへんかんする．
 const decordeJsonDataList = (_jsonData) => {
     playingData = JSON.parse(_jsonData);
-    _jsonData = null;
+    console.log(playingData["dataList"].length);
+    delete _jsonData;
 }
 
 
@@ -206,13 +200,10 @@ const prepareRec = (_initRecCB) => {
 };
 
 const startRecording = (_recordingCB) => {
-    //debugLog("startRecorging");
+    ////debugLog("startRecorging");
     if (!isRecording) {
         startRecTime = performance.now() - (beforeStorageTime * 1000);
-
-
         recTime = 0;
-
 
         //現在時刻，sampleRate，fsdivN，をDataに入れる．
         data.time = new Date();
@@ -234,7 +225,7 @@ const startRecording = (_recordingCB) => {
     }
 };
 
-
+let PCMData;
 const stopRecording = (_canvas, _stopRecCB) => {
     if (isRecording) {
         if (_canvas.hasChildNodes() == false) {
@@ -250,25 +241,29 @@ const stopRecording = (_canvas, _stopRecCB) => {
         recTime = 0;
         let jsonData = {};
         jsonData = createJsonData(data);
+
+        // playingData = data;
         createJsonDataFormat();
+        console.log("data.dataList", data.dataList.length);
         decordeJsonDataList(jsonData);
 
-        getBars();
+        delete jsonData;
         initBars();
         //再生用のオーディオコンテキストを作る．
         playAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         showPlayBars(canvasPB);
 
+        PCMData = getPCMData(playingData);
+
         _stopRecCB.onReady(true);
         _stopRecCB.onComplete(true);
+
     }
 }
 
 const initCanvasPB = (_canvasPB) => {
     canvasPB = _canvasPB;
     canvasPBCtx = canvasPB.getContext("2d");
-    // showPlayBars(canvasPB);
-
 }
 
 //再生ボタンを押下したときに実行される関数．
@@ -282,15 +277,14 @@ const playDataList = (_canvas, callback) => {
                 //◇収録データの再生を開始
                 if (playAudioCtx.state !== "suspended") {
                     dataIndex = -1;
-                    debugLog("playAudioCtx state", playAudioCtx.state);
-                    playPCMData();
+                    //debugLog("playAudioCtx state", playAudioCtx.state);
+                    playPCMData(PCMData);
                 }
                 else {
-                    debugLog("playAudioCtx.resume");
-                    debugLog("playAudioCtx", playAudioCtx);
+                    //debugLog("playAudioCtx.resume");
+                    //debugLog("playAudioCtx", playAudioCtx);
                     playAudioCtx.resume();
                 }
-
                 otomieVisual_Rec.play();
                 animateCanvases(_canvas, canvasPB, callback);
                 callback.onReady(true);
@@ -328,37 +322,33 @@ const showPlayBars = (_canvas) => {
 
 }
 
+
+
 const initBars = () => {
-    //画面も削除？
-    canvasTLCtx.clearRect(0, 0, canvasTL.width, canvasTL.height);
-    bars.splice(0);
-    pushBar(canvasTL.width - margin, canvasTL.height / 2, 0, 0, getBarVelocity(), "rgb(0,0,0)", performance.now());
-}
-
-
-const getBars = () => {
     let _bars = bars;
-    let barsTailIndex = bars.index - 1;
-    playBars = [];
-    //バーの数を取得する？
     for (let i = 0; i < _bars.length; i++) {
         playBars[i] = _bars[i];
     }
+    delete _bars;
     playBars = playBars.filter((element) => {
         if (element.time >= startRecTime && element.time <= stopRecTime) {
             return true;
         }
     })
+    canvasTLCtx.clearRect(0, 0, canvasTL.width, canvasTL.height);
+    bars.splice(0);
+    pushBar(canvasTL.width - margin, canvasTL.height / 2, 0, 0, getBarVelocity(), "rgb(0,0,0)", performance.now());
 }
 
-const playPCMData = () => {
+const playPCMData = (PCMdata) => {
+    let _PCMdata = PCMdata
     let playDataSource = playAudioCtx.createBufferSource();
-    let PCMdata = getPCMData(playingData);
-    let audioBuffer = playAudioCtx.createBuffer(1, PCMdata.length, audioCtx.sampleRate);
+    // let PCMdata = getPCMData(playingData);
+    let audioBuffer = playAudioCtx.createBuffer(1, _PCMdata.length, audioCtx.sampleRate);
     let gainNode = playAudioCtx.createGain();
     playDataSource.connect(gainNode);
     gainNode.gain.value = 3.4;
-    audioBuffer.getChannelData(0).set(PCMdata);
+    audioBuffer.getChannelData(0).set(_PCMdata);
     playDataSource.buffer = audioBuffer;
     playDataSource.loop = false;                   //. ループ再生するか？
     playDataSource.loopStart = 0;                  //. オーディオ開始位置（秒単位）
@@ -375,12 +365,15 @@ const playPCMData = () => {
 const getPCMData = (_playingData) => {
     let PCMData = [];
     let result = [];
-    for (let i = 0; i < _playingData["dataList"].length - 1; i++) {
+    let length = _playingData["dataList"].length - 1;
+    // PCMData = _playingData;
+    for (let i = 0; i < length; i++) {
         PCMData.push(_playingData["dataList"][i]["raw"]["PCM"]);
     }
     PCMData.forEach(element => {
         result = result.concat(Object.values(element));
     });
+    delete PCMData;
     return result;
 }
 
@@ -406,7 +399,7 @@ const stopDataList = (_stopPlayingCB) => {
 
 const restartDataList = (_restartPlayingCB) => {
     if (!isRecording) {
-        debugLog("restartDataList");
+        //debugLog("restartDataList");
         isPlaying = false;
         dataIndex = -1;
         playAudioCtx.suspend();
@@ -507,23 +500,38 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.saturation = volumePeak / 255;
     visual.brightness = pitch;
     visual.objectCount = calcObjectCount(pitch, volume);
-    visual.objectCount = pitch;
-    visual.objectShape = 0.3;
+    // visual.objectCount = 1;
+    visual.objectShape = pitch;
+    // visual.objectShape = value+0.16667;
+
+
     visual.speed = pitch * 0.1;
 
     frameData.raw = raw;
     frameData.visual = visual;
 
-    raw = null;
-    visual = null;
-    frequency = null;
-    frequencyPeak = null;
-    volumePeak = null;
-    roughness = null;
-
+    delete raw;
+    delete visual;
+    delete frequency;
+    delete frequencyPeak;
+    delete volumePeak;
+    delete roughness;
     return frameData;
-
 }
+
+let count = 0;
+let value = 0;
+const conuntUP = () => {
+    count += 1.0;
+    value = count % 5;
+    value = value / 5;
+
+    // return value;    
+}
+
+setInterval(conuntUP, 1000);
+
+
 
 const calcHue = (_sharpness) => {
     let hue = 360 * (Math.abs(_sharpness - 0.5) * 2) / 360;
@@ -632,7 +640,7 @@ const getNumPlayingData = () => {
         numPlayingData = 0;
         // thumbnail = "none";
     }
-    debugLog("numPlayingData" + numPlayingData);
+    //debugLog("numPlayingData" + numPlayingData);
     return numPlayingData;
 };
 
@@ -644,7 +652,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
     let drawTime;
 
     if (isPlaying) {
-        debugLog("isPlaying", isPlaying);
+        //debugLog("isPlaying", isPlaying);
 
         if (dataIndex == -1) {
             dataIndex = 0;
@@ -657,6 +665,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
             progressBarContainer.splice(0);
             progressBarContainer.push(new progressBar(playBarHeadPos, 0, 1, canvasPB.height));
             progressBarContainer[0].render(canvasPBCtx);
+            // console.log(data["dataList"].length);
         }
 
         drawTime = (performance.now() / 1000) - startPlayTime;
@@ -683,7 +692,8 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
 
             dataIndex += 1;
             let n_index = dataIndex / (data["dataList"].length - 1);
-
+            // console.log(dataIndex);
+            // console.log(n_index);
             progressBarContainer[0].x = (n_index * playBarWidth) + playBarHeadPos;
             canvasPBCtx.clearRect(0, 0, canvasPB.width, canvasPB.height);
             playBars.forEach((element) => {
@@ -697,7 +707,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
                 dataIndex = -1;
                 requestAnimationFrame(() => { animateCanvases(_canvas, _canvasPB, _callback) });
                 //音声再生もループする．
-                playPCMData();
+                playPCMData(PCMData);
                 return;
             }
             playDeltaTime = audioTotalTime;
