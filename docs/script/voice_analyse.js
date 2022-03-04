@@ -186,7 +186,7 @@ const createJsonData = (_data) => {
 //受けとったJsonデータをオブジェクトにへんかんする．
 const decordeJsonDataList = (_jsonData) => {
     playingData = JSON.parse(_jsonData);
-    console.log(playingData["dataList"].length);
+    // console.log(playingData["dataList"].length);
     delete _jsonData;
 }
 
@@ -240,10 +240,12 @@ const stopRecording = (_canvas, _stopRecCB) => {
         recTime = 0;
         let jsonData = {};
         jsonData = createJsonData(data);
-
+        //収録開始時のサムネイル取得
+        let frameData = data["dataList"][0]["visual"];
+        thumbnail = otomieVisual.takeScreenShot(frameData);
         // playingData = data;
         createJsonDataFormat();
-        console.log("data.dataList", data.dataList.length);
+        // console.log("data.dataList", data.dataList.length);
         decordeJsonDataList(jsonData);
 
         delete jsonData;
@@ -254,9 +256,7 @@ const stopRecording = (_canvas, _stopRecCB) => {
 
         PCMData = getPCMData(playingData);
 
-        //収録開始時のサムネイル取得
-        let frameData = data["dataList"][0]["visual"];
-        thumbnail = otomieVisual.takeScreenShot(frameData);
+
 
         _stopRecCB.onReady(true);
         _stopRecCB.onComplete(true);
@@ -669,7 +669,7 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
             progressBarContainer.splice(0);
             progressBarContainer.push(new progressBar(playBarHeadPos, 0, 1, canvasPB.height));
             progressBarContainer[0].render(canvasPBCtx);
-            console.log(data["dataList"].length);
+            // console.log(data["dataList"].length);
         }
 
         drawTime = (performance.now() / 1000) - startPlayTime;
@@ -699,7 +699,6 @@ const animateCanvases = (_canvas, _canvasPB, _callback) => {
             // console.log(dataIndex);
             // console.log(n_index);
             progressBarContainer[0].x = (n_index * playBarWidth) + playBarHeadPos;
-            console.log(progressBarContainer[0].x);
             canvasPBCtx.clearRect(0, 0, canvasPB.width, canvasPB.height);
             playBars.forEach((element) => {
                 // element.color = "rgb(0,0,0)";
