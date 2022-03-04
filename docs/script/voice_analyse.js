@@ -211,7 +211,7 @@ const startRecording = (_recordingCB) => {
 
         //収録開始時のサムネイル取得
         let frameData = data["dataList"][data["dataList"].length - 1]["visual"];
-        thumbnail = otomieVisual.takeScreenShot(frameData);
+        //thumbnail = otomieVisual.takeScreenShot(frameData);
 
         //再生用のインデックスをリセット
         dataIndex = -1;
