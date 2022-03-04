@@ -209,9 +209,9 @@ const startRecording = (_recordingCB) => {
         data.samplingRate = audioCtx.sampleRate;
         data.fsDivN = fsDivN;
 
-        //収録開始時のサムネイル取得
-        let frameData = data["dataList"][data["dataList"].length - 1]["visual"];
-        //thumbnail = otomieVisual.takeScreenShot(frameData);
+        // //収録開始時のサムネイル取得
+        // let frameData = data["dataList"][data["dataList"].length - 1]["visual"];
+        // //thumbnail = otomieVisual.takeScreenShot(frameData);
 
         //再生用のインデックスをリセット
         dataIndex = -1;
@@ -253,6 +253,10 @@ const stopRecording = (_canvas, _stopRecCB) => {
         showPlayBars(canvasPB);
 
         PCMData = getPCMData(playingData);
+
+        //収録開始時のサムネイル取得
+        let frameData = data["dataList"][0]["visual"];
+        thumbnail = otomieVisual.takeScreenShot(frameData);
 
         _stopRecCB.onReady(true);
         _stopRecCB.onComplete(true);
