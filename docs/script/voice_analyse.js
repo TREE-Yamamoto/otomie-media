@@ -190,7 +190,6 @@ const decordeJsonDataList = (_jsonData) => {
     delete _jsonData;
 }
 
-
 const prepareRec = (_initRecCB) => {
     playingData = null;
     _initRecCB.onReady(true);
@@ -490,7 +489,6 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.objectShape = 0;
     visual.speed = 0;
 
-    // visual.pitch = N_spectrumPeak;
 
     let pitch = Math.min(pitchMax, Math.max(frequencyPeak, pitchMin));   //クリッピング
     pitch = (frequencyPeak - pitchMin) / (pitchMax - pitchMin);      //正規化
@@ -504,7 +502,7 @@ const createFrameDataObj = (bufferData, spectrums, timeDomainArray, audioDeltaTi
     visual.saturation = volumePeak / 255;
     visual.brightness = pitch;
     visual.objectCount = calcObjectCount(pitch, volume);
-    visual.objectCount = 1;
+    // visual.objectCount = 0;
     visual.objectShape = pitch;
     // visual.objectShape = value;
 
