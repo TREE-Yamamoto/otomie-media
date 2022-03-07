@@ -66,10 +66,10 @@ const ph = 2;
 const otomieVisual_Rec = new OtomieVisual();
 
 
-let sampleArea = null
-window.addEventListener("load", () => {
-    sampleArea = document.querySelector('#sampleArea');
-})
+// let sampleArea = null
+// window.addEventListener("load", () => {
+//     sampleArea = document.querySelector('#sampleArea');
+// })
 
 
 const startCollecting = (_micOnCB = {}) => {
@@ -129,7 +129,7 @@ const onAudioProcess = (e) => {
     let input = e.inputBuffer.getChannelData(0);    //PCMデータ：信号の強度が格納されている.
     let bufferData = new Float32Array(input);
     analyseVoice(bufferData, spectrums, timeDomainArray);
-    sampleArea.innerHTML = ((performance.memory.usedJSHeapSize) / 1000000).toFixed(0) + "MBytes";
+    // sampleArea.innerHTML = ((performance.memory.usedJSHeapSize) / 1000000).toFixed(0) + "MBytes";
 
     delete input;
     delete bufferData;
@@ -154,11 +154,10 @@ const analyseVoice = (_bufferData, _spectrums, _timeDomainArray) => {
     // }
 
 
-    audioAnalyser.getByteFrequencyData(_spectrums);                      //周波数領域の振幅データを配列に格納：一瞬の値
-    audioAnalyser.getByteTimeDomainData(_timeDomainArray);               //時間領域の振幅データを配列に格納
+    audioAnalyser.getByteFrequencyData(_spectrums);           //周波数領域の振幅データを配列に格納：一瞬の値
+    audioAnalyser.getByteTimeDomainData(_timeDomainArray);    //時間領域の振幅データを配列に格納
 
-
-    let frameDataObj = createFrameDataObj(_bufferData, _spectrums, _timeDomainArray, audioDeltaTime);                            //1フレーム分のデータ生成
+    let frameDataObj = createFrameDataObj(_bufferData, _spectrums, _timeDomainArray, audioDeltaTime);        //1フレーム分のデータ生成
     createData(frameDataObj);
 
     let dataIndex = data["dataList"].length - 1;
